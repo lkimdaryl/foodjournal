@@ -1,0 +1,112 @@
+.newEntryForm {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 10px;
+    background-color: var(--cardBackground);
+    width: clamp(250px, 80%, 700px);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    margin: 0 auto;
+    margin: 50px auto;
+    justify-content: flex-start;
+    align-items: center;
+    color: var(--navBackground);
+    text-align: center;
+    height: fit-content;
+}
+
+.newEntryForm h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-family: cursive;
+    text-shadow: white 2px 1px 4px;
+}
+
+.entryLabel {
+    margin-top: 10px;   
+    font-size: 1.2rem;
+}
+
+.entryInput {
+    width: clamp(230px, 80%, 650px);
+    font-family: 'Jockey One', sans-serif;
+    font-size: 1rem;
+    background-color: beige;
+    border-radius: 5px;
+    text-align: center;
+    color: black;
+    height: 35px;
+}
+
+.entryInput::placeholder {
+  color: gray;        /* your desired color */
+  opacity: 1;         /* makes sure it's not semi-transparent */
+  font-style: italic; /* optional styling */
+}
+
+.comments {
+    resize: none;
+    overflow-y: auto;
+    border-radius: 5px;
+    background: beige;
+    width: clamp(230px, 80%, 650px);
+    color: black;
+    padding: 5px;
+
+}
+
+.comments::placeholder {
+  color:gray;        /* your desired color */
+  opacity: 1;         /* makes sure it's not semi-transparent */
+  font-style: italic; /* optional styling */
+}
+
+.formBttnContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.formBttn {
+    cursor: pointer;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    background-color: #36A7F9;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+
+.fileUpload {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    justify-content: center;
+}
+
+.hiddenFileInput {
+  display: none; /* hide the native file input */
+}
+
+.customButton {
+  background-color: #36A7F9;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.fileName {
+  margin-left: 10px;
+  color: #555;
+  font-style: italic;
+}

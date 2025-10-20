@@ -1,0 +1,16 @@
+.postContainer {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  width: calc(100vw - 200px);
+}
+
+@media screen and (max-width: 645px) {
+  .postContainer {
+    width: 100vw;
+  }
+}
