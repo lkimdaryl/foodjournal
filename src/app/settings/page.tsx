@@ -49,6 +49,13 @@ interface InputFieldProps {
   placeholder?: string;
 }
 
+interface InputFieldConfig {
+  label: string;
+  name: keyof UserData | 'password' | 'verifyPassword';
+  type?: string;
+  error?: string;
+}
+
 const InputField: React.FC<InputFieldProps> = ({
   label, name, type = 'text', value, onChange, readOnly, error, placeholder
 }) => (
@@ -72,7 +79,6 @@ const InputField: React.FC<InputFieldProps> = ({
 export default function EditProfile() {
   const DefaultPic = '/blankProfile.png';
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  const access_token = Cookies.get('access_token');
   const { user, setUser, resetUser, initialStateRef } = useUserData(`${baseUrl}/api/v1/auth/get_user`);
   const [profileImage, setProfileImage] = useState<string>(DefaultPic);
   const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
@@ -142,7 +148,7 @@ export default function EditProfile() {
     }
   };
 
-  const inputFields = [
+  const inputFields: (InputFieldConfig | null)[] = [
     { label: 'First Name', name: 'first_name' },
     { label: 'Last Name', name: 'last_name' },
     { label: 'Username', name: 'username' },
@@ -166,7 +172,7 @@ export default function EditProfile() {
 
       <form className={styles.registrationForm}>
         <div className={styles.inputSection}>
-          {inputFields.filter(Boolean).map((field: any) => (
+          {inputFields.filter((f): f is InputFieldConfig => f !== null).map((field) => (
             <InputField
               key={field.name}
               label={field.label}

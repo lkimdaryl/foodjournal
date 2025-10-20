@@ -16,9 +16,9 @@ export default function SignUp() {
   const [passwordMatch, setPasswordMatch] = useState(true);
   const [userNameErrorMessage, setUserNameErrorMessage] = useState('');
   const [emailErrorMessage, setEmailErrorMessage] = useState('');
-//   const baseUrl = import.meta.env.VITE_APP_BASE_URL;
-//   const fetchUrl = `${baseUrl}/api/v1/auth/create_user`;
-
+  
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const url = `${baseUrl}/api/v1/auth/create_user`;
   const router = useRouter();
 
   const validateUserName = (userName: string) => {
@@ -61,32 +61,32 @@ export default function SignUp() {
         password: password
       };
 
-        // try {
-        //   const response = await fetch(fetchUrl, {
-        //     method: 'POST',
-        //     headers: {
-        //       'accept': 'application/json',
-        //       'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify(userData),
-        //   });
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData),
+          });
 
-        //   if (!response.ok) {
-        //     throw new Error('Network response was not ok');
-        //   }
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
 
-        //   const data = await response.json();
-        //   console.log('Sign up successful:', data);
-        //   alert("Sign up successful! Redirecting to login page...");
-        //   setTimeout(() => {
-        //     router.push('/login');
-        //   }, 2000);
+          const data = await response.json();
+          console.log('Sign up successful:', data);
+          alert("Sign up successful! Redirecting to login page...");
+          setTimeout(() => {
+            router.push('/login');
+          }, 2000);
 
-        // } catch (error) {
-        //   console.error('Error during sign up:', error);
-        // }
-      }
-    };
+        } catch (error) {
+          console.error('Error during sign up:', error);
+        }
+    }
+  };
 
   return (
     <div className={styles.formContainer}>

@@ -7,6 +7,7 @@ import cstyles from '@/app/ui/home.module.css';
 import { useParams } from 'next/navigation';
 import demoPosts from '@/app/lib/posts.json';
 import PostCard from '@/app/components/postcard';
+import Image from 'next/image';
 
 export default function UserPage() {
     const { username } = useParams() as { username: string };
@@ -21,7 +22,13 @@ export default function UserPage() {
     return (
         <div className={cstyles.postContainer}>
             <div className={styles.profileSection}>
-                <img className={styles.profilePic} src={profilePic} alt="Profile Picture" />
+                <Image
+                    src={profilePic}
+                    alt="Profile Picture"
+                    width={200}
+                    height={200}
+                    className={styles.profilePic}
+                />
                 <span>{username}</span>
             </div>
             {userDemoPosts.map((post, index) => (

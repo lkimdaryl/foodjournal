@@ -7,11 +7,12 @@ import { Post, PostDetailProps } from '@/app/lib/definitions';
 import Image from 'next/image';
 
 export default function PostDetail({ post, onClose }: PostDetailProps) {
-    if (!post) return null;
-
     const router = useRouter();
+    
+    if (!post) return null;
     console.log(post);
     console.log(Cookies.get('user'));
+    
     const myPage = Cookies.get('user') === post.username? true : false;
 
     function handleDelete(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {

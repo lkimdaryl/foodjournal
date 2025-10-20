@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Webcam from "react-webcam";
 import { ImgSrcProps } from "@/app/lib/definitions";
 import styles from '@/app/ui/new_edit_post.module.css';
+import Image from "next/image";
 
 
 export default function ImageInput({ onImageChange, initialImage }: ImgSrcProps) {
@@ -16,7 +17,7 @@ export default function ImageInput({ onImageChange, initialImage }: ImgSrcProps)
         setPreview(initialImage);
         onImageChange(initialImage);
     }
-  }, [initialImage]);
+  }, [initialImage, onImageChange]);
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -126,7 +127,13 @@ export default function ImageInput({ onImageChange, initialImage }: ImgSrcProps)
       {preview && (
         <div className="image-preview">
           <p>Preview:</p>
-          <img src={preview} alt="Preview" style={{ maxWidth: "200px", borderRadius: "8px" }} />
+          <Image
+            src={preview}
+            alt="Preview"
+            width={200}
+            height={200}
+            style={{ maxWidth: "200px", borderRadius: "8px" }}
+          />
         </div>
       )}
     </div>

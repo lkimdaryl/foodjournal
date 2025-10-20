@@ -29,7 +29,10 @@ export function middleware(request: NextRequest) {
 
         try {
             // Decode without verifying signature
-            const decoded = jwt.decode(accessToken) as { exp?: number; [key: string]: any };
+            const decoded = jwt.decode(accessToken) as { 
+                exp?: number; 
+                [key: string]: unknown 
+            };
 
             if (decoded?.exp) {
             const now = Math.floor(Date.now() / 1000); // current time in seconds

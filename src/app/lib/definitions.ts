@@ -101,3 +101,10 @@ export interface UserData {
 export type PostsType = {
     [username: string]: DbPost[];
 };
+
+export interface RecipeItem {
+  uri: string;
+  url: string;
+  image: string;
+  label: string;
+}

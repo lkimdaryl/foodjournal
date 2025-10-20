@@ -4,10 +4,10 @@ import cstyles from '@/app/ui/home.module.css';
 import styles from '@/app/ui/user.module.css';
 import myPostsData from '@/app/lib/demoposts.json';
 import PostCard from '@/app/components/postcard';
-import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { DbPost, PostsType } from '@/app/lib/definitions'
+import Image from 'next/image';
 
 
 const myPosts: PostsType = Object.fromEntries(
@@ -35,7 +35,6 @@ const myPosts: PostsType = Object.fromEntries(
 
 export default function DemoUserPage() {
     const router = useRouter();
-    const signedIn = Cookies.get('signedIn') === 'true';
     const DefaultPic = '/blankProfile.png';
 
     useEffect(() => {
@@ -81,7 +80,13 @@ export default function DemoUserPage() {
     return (
         <div className={cstyles.postContainer}>
             <div className={styles.profileSection}>
-                <img className={styles.profilePic} src={DefaultPic} alt="Profile" />
+                <Image
+                    src={DefaultPic}
+                    alt="Profile Picture"
+                    width={200}
+                    height={200}
+                    className={styles.profilePic}
+                />
                 <span>{myPosts["demo_guest"][0].username}</span>
             </div>
             {allMyPosts.map((food, index) => (

@@ -6,10 +6,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import ImageInput from "@/app/components/imgsrc";
-
-
-//something is seriously wrong with the api request
-
+import { DbPost } from '@/app/lib/definitions';
 
 
 export default function NewPost() {
@@ -37,12 +34,13 @@ export default function NewPost() {
             const user = Cookies.get('user');
             const raw = localStorage.getItem('myPosts');
 
-            let allPosts: { [key: string]: any } = {};
+            let allPosts: { [key: string]: DbPost[] } = {};
             try {
                 allPosts = raw ? JSON.parse(raw) : {};
             } catch (e) {
                 console.warn("Corrupted localStorage. Resetting.");
                 allPosts = {};
+                console.error(e);
             }
 
             if (typeof user !== 'string') {

@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { DbPost } from '@/app/lib/definitions';
 import cstyles from '@/app/ui/home.module.css';
 import styles from '@/app/ui/user.module.css';
+import Image from 'next/image';
 
 export default function MyPage() {
     const router = useRouter();
@@ -44,7 +45,7 @@ export default function MyPage() {
         .catch(error => {
             console.error('Error fetching posts:', error);
         });
-    }, []);
+    }, [allMyPosts.length, fetchUrl]);
 
     useEffect(() => {
         const handlePostDeleted = (event: Event) => {
@@ -62,7 +63,13 @@ export default function MyPage() {
     return (
         <div className={cstyles.postContainer}>
             <div className={styles.profileSection}>
-                <img className={styles.profilePic} src={profilePic} alt="Profile" />
+                <Image
+                    src={profilePic}
+                    alt="Profile Picture"
+                    width={200}
+                    height={200}
+                    className={styles.profilePic}
+                />
                 <span>{Cookies.get('user')}</span>
             </div>
             {allMyPosts.map((post, index) => (

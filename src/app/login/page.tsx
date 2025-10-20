@@ -63,7 +63,7 @@ export default function Login() {
           Cookies.set("signedIn", "true", { path: "/" });
           Cookies.set("user", username, { path: "/" });
           Cookies.set("userId", data.user_id, { path: "/" });
-          Cookies.set("profilePicture", data.profile_picture ?? "/blankProfile.png"), { path: "/" };
+          Cookies.set("profilePicture", data.profile_picture ?? "/blankProfile.png", { path: "/" });
           loginEvent('/user/mypage');
         } else {
           setError('Invalid username or password.');

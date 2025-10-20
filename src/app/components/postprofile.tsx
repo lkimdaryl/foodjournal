@@ -2,6 +2,7 @@ import styles from '@/app/ui/postprofile.module.css'
 import Cookies from 'js-cookie';
 import { usePathname, useRouter } from 'next/navigation';
 import { PostProfileProps } from '@/app/lib/definitions';
+import Image from 'next/image';
 
 export default function PostProfile({profilePic, username, postUserId, currentUserId}: PostProfileProps) {
 
@@ -30,7 +31,13 @@ export default function PostProfile({profilePic, username, postUserId, currentUs
   
     return (
     <div className={styles.profileSection} onClick={handleUsernameClick} >
-        <img className={styles.profilePic} src={profilePic} alt='Profile' />
+        <Image
+            src={profilePic || '/blankProfile.png'}
+            alt="Profile Picture"
+            width={200}
+            height={200}
+            className={styles.profilePic}
+            />
         <p className={styles.username}>{username}</p>
     </div>
   )

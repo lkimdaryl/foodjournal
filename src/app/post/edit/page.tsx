@@ -2,10 +2,11 @@
 
 import styles from '@/app/ui/new_edit_post.module.css';
 import DynamicStars from '@/app/components/dynamicstarrating';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import ImageInput from "@/app/components/imgsrc";
+import { DbPost } from '@/app/lib/definitions';
 
 export default function EditPost() {
     const router = useRouter();
@@ -31,12 +32,13 @@ export default function EditPost() {
             const user = Cookies.get('user');
             const raw = localStorage.getItem('myPosts');
 
-            let allPosts: { [key: string]: any[] } = {};
+            let allPosts: { [key: string]: DbPost[] } = {};
             try {
                 allPosts = raw ? JSON.parse(raw) : {};
             } catch (e) {
                 console.warn("Corrupted localStorage. Resetting.");
                 allPosts = {};
+                console.error(e);
             }
 
             if (!Array.isArray(allPosts[user!])) {
