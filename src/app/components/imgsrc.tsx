@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Webcam from "react-webcam";
 import { ImgSrcProps } from "@/app/lib/definitions";
 import styles from '@/app/ui/new_edit_post.module.css';
-import Image from "next/image";
+import NextImage from "next/image";
 
 
 export default function ImageInput({ onImageChange, initialImage }: ImgSrcProps) {
@@ -127,7 +127,7 @@ export default function ImageInput({ onImageChange, initialImage }: ImgSrcProps)
       {preview && (
         <div className="image-preview">
           <p>Preview:</p>
-          <Image
+          <NextImage
             src={preview}
             alt="Preview"
             width={200}
