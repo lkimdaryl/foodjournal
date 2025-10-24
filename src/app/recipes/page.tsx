@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import styles from '@/app/ui/recipes.module.css';
 import { pastaProps, recipeProps } from '@/app/lib/definitions';
 import Image from 'next/image';
-import { RecipeItem } from '@/app/lib/definitions';
+import { RecipeData, RecipeItem } from '@/app/lib/definitions';
 
 const Pasta: React.FC<pastaProps> = ({img, label, url}) => {
   return (
@@ -51,7 +51,7 @@ export default function Recipes() {
   const [loading, setLoading] = useState<boolean | undefined>(false);
   const [error, setError] = useState<string | null>(null);
   const [pastaBank, setPastaBank] = useState<[]>([]);
-  const [pastaOfTheWeek, setPastaOfTheWeek] = useState<string | null>();
+  const [pastaOfTheWeek, setPastaOfTheWeek] = useState<RecipeData | null>();
 
   const applicationKey =  process.env.NEXT_PUBLIC_EDAMAM_API_KEY;
   const applicationId =  process.env.NEXT_PUBLIC_EDAMAM_API_ID;

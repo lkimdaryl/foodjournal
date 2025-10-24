@@ -108,3 +108,7 @@ export interface RecipeItem {
   image: string;
   label: string;
 }
+
+export interface RecipeData {
+  recipe: RecipeItem;
+}
