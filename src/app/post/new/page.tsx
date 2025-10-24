@@ -54,7 +54,6 @@ export default function NewPost() {
             }
 
             const last_id = allPosts[user][allPosts[user].length - 1]?.id;
-            console.log("Last ID:", last_id);
             const newPost = {
                 id: last_id? last_id + 1 : 0,
                 user_id: -1,
@@ -99,8 +98,8 @@ export default function NewPost() {
                 }
                 return response.json();
             })
-            .then(data => {
-                console.log('Post created successfully:', data);
+            .then(() => {
+                console.log('Post created successfully');
                 router.push('/user/mypage');
             })
             .catch(error => {

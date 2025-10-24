@@ -10,9 +10,6 @@ export default function PostDetail({ post, onClose }: PostDetailProps) {
     const router = useRouter();
     
     if (!post) return null;
-    console.log(post);
-    console.log(Cookies.get('user'));
-    
     const myPage = Cookies.get('user') === post.username? true : false;
 
     function handleDelete(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
@@ -24,7 +21,6 @@ export default function PostDetail({ post, onClose }: PostDetailProps) {
                 if (!stored) return;
 
                 const parsedPosts: { [username: string]: Post[] } = JSON.parse(stored);
-                console.log(parsedPosts);
                 for (const user in parsedPosts) {
                     parsedPosts[user] = parsedPosts[user].filter(p => p.id !== post.id);
                 }

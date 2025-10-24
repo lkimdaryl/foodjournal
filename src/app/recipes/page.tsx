@@ -80,7 +80,7 @@ export default function Recipes() {
         const data = await response.json();
         setPastaBank(data.hits);
       } catch (err) {
-        console.log(`Failed to fetch recipes. Error: ${err}`);
+        console.error(`Failed to fetch recipes. Error: ${err}`);
       } finally {
         setLoading(false);
       }
@@ -92,7 +92,6 @@ export default function Recipes() {
     const selectPastaOfTheWeek = () => {
       if (pastaBank.length > 0) {
         const randomPasta = pastaBank[Math.floor(Math.random() * pastaBank.length)];
-        console.log(typeof(randomPasta));
         setPastaOfTheWeek(randomPasta);
       }
     };

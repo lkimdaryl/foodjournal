@@ -21,7 +21,6 @@ const PostList: React.FC<PostListProps> = ({ fetchUrl }) => {
     })
       .then(response => response.json())
       .then((data: DbPost[]) => {
-        console.log('Fetched posts:', data);
         setPosts(data);
       })
       .catch(error => console.error('Error fetching data:', error));

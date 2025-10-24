@@ -76,7 +76,6 @@ export default function SignUp() {
           }
 
           const data = await response.json();
-          console.log('Sign up successful:', data);
           alert("Sign up successful! Redirecting to login page...");
           setTimeout(() => {
             router.push('/login');

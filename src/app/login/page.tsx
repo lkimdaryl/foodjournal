@@ -40,7 +40,6 @@ export default function Login() {
     } 
     else {
       const formData = new URLSearchParams();
-      console.log("Attempting login with:", { username, password });
       formData.append("username", username);
       formData.append("password", password);
       
@@ -55,7 +54,6 @@ export default function Login() {
           },
           body: formData.toString(),
         });
-        console.log(response)
         const data = await response.json();
         
         if (response.ok) {

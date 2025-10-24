@@ -14,28 +14,31 @@ export default function NavBar() {
   const [username, setUserName] = useState<string | undefined>(() => Cookies.get("user"));
   const [profilePic, setProfilePic] = useState<string | undefined>(() => Cookies.get("profilePicture") || "/blankProfile.png");
 
+  const performLocalLogout = () => {
+    Object.keys(Cookies.get()).forEach((cookie) => Cookies.remove(cookie));
+    localStorage.clear();
+    setUserName(undefined);
+    setProfilePic("/blankProfile.png");
+  };
+  
   const handleLogout = async () => {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     const access_token = Cookies.get("access_token");
     const url = `${baseUrl}/api/v1/auth/logout`;
+    
     try {
-      const res = await fetch(url, { 
+      await fetch(url, { 
         method: "POST",
         headers: {
           'Authorization': `Bearer ${access_token}`
         }
       });
-      console.log("Logout response:", res);
-      if (res.ok) {
-        Object.keys(Cookies.get()).forEach((cookie) => Cookies.remove(cookie));
-        localStorage.clear();
-        setUserName(undefined);
-        setProfilePic("/blankProfile.png");
-        router.push("/");
-      }
     } catch (err) {
       console.error("Logout failed:", err);
     }
+
+    performLocalLogout();
+    router.push("/");
   };
 
   useEffect(() => {

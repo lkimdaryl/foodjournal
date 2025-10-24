@@ -11,12 +11,8 @@ import { DbPost, ApiPayload } from '@/app/lib/definitions';
 export default function EditPost() {
     const router = useRouter();
 
-    const [imageData, setImageData] = useState<string | null>(null);
     const [post, setPost] = useState<DbPost | null>(null);
-    // const postToEdit = localStorage.getItem('postToEdit');
-    // const post = postToEdit ? JSON.parse(postToEdit) : null;
-    console.log(post);
-
+    const [imageData, setImageData] = useState<string | null>(null);
     const [rating, setRating] = useState<number>(() => post?.rating || 0);
 
     useEffect(() => {
@@ -35,11 +31,6 @@ export default function EditPost() {
             }
         }
     }, []);
-
-    // Log the post state for debugging after it's been set
-    useEffect(() => {
-        console.log(post);
-    }, [post]);
 
     function handleCancel(event: React.MouseEvent<HTMLButtonElement>): void {
         event.preventDefault();
@@ -101,9 +92,6 @@ export default function EditPost() {
             delete apiPayload.profile_pic;
             delete apiPayload.username;
 
-            console.log(rating);
-            console.log("Updated Post Data:", apiPayload);
-
             fetch(url, {
                 method: 'POST',
                 headers: {
@@ -119,8 +107,8 @@ export default function EditPost() {
                 }
                 return response.json();
             })
-            .then(data => {
-                console.log('Post updated successfully:', data);
+            .then(() => {
+                console.log('Post updated successfully');
                 router.push('/user/mypage'); // Redirect to My Page after successful edit
             })
             .catch(error => {

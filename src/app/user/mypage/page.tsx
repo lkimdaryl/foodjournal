@@ -39,7 +39,6 @@ export default function MyPage() {
             if (data && data.length > 0) {
                 setAllMyPosts(data);
                 setProfilePic(data[0].profile_pic || DefaultPic);
-                console.log(data);
             }
         })
         .catch(error => {

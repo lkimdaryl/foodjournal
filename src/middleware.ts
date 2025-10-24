@@ -28,7 +28,6 @@ export function middleware(request: NextRequest) {
         }
 
         try {
-            // Decode without verifying signature
             const decoded = jwt.decode(accessToken) as { 
                 exp?: number; 
                 [key: string]: unknown 
@@ -38,8 +37,6 @@ export function middleware(request: NextRequest) {
             const now = Math.floor(Date.now() / 1000); // current time in seconds
             
             if (decoded.exp < now) {
-                // Token is expired
-                console.log("Token expired");
                 const response = NextResponse.redirect(new URL("/login", request.url));
                 response.cookies.delete("access_token");
                 response.cookies.delete("signedIn");
@@ -50,7 +47,7 @@ export function middleware(request: NextRequest) {
             }
             }
         } catch (err) {
-            console.log("Failed to decode token:", err);
+            console.error("Failed to decode token:", err);
         }
     }
 

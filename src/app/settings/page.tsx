@@ -10,7 +10,6 @@ import { UserData } from '@/app/lib/definitions';
 function useUserData(url: string) {
   const initialStateRef = useRef<Partial<UserData>>({});
   const [user, setUser] = useState<Partial<UserData>>({});
-  console.log(url);
 
   useEffect(() => {
     const fetchUser = async () => {
