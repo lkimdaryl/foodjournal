@@ -62,6 +62,14 @@ export interface DbPost {
   tags?: string;
 }
 
+export interface ApiPayload extends Omit<DbPost, 'id' | 'username' | 'profile_pic'> {
+    // The properties we want to delete must be present in the *type*
+    // but declared as optional in the structure we are deleting from.
+    id?: number; 
+    username?: string;
+    profile_pic?: string | undefined;
+}
+
 export interface PostListProps {
   fetchUrl?: string;
   isUserPage?: boolean;
