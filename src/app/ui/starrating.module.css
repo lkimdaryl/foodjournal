@@ -1,8 +1,20 @@
+/* Mobile-first */
 .star {
-  font-size: 30px;
+  font-size: 24px;
   color: gray;
 }
 
 .star.filled {
   color: var(--navBackground);
+}
+
+.interactive {
+  cursor: pointer;
+}
+
+/* Desktop */
+@media screen and (min-width: 640px) {
+  .star {
+    font-size: 30px;
+  }
 }

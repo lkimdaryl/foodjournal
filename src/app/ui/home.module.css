@@ -1,16 +1,22 @@
+/* Mobile-first: full-width single column */
 .postContainer {
   position: relative;
   display: flex;
   flex-wrap: wrap;
-  gap: 40px;
+  gap: 20px;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-  width: calc(100vw - 200px);
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
-@media screen and (max-width: 645px) {
+/* Desktop: wider layout with more spacing */
+@media screen and (min-width: 640px) {
   .postContainer {
-    width: 100vw;
+    gap: 40px;
+    width: calc(100% - 40px);
+    padding: 20px;
   }
 }

@@ -3,51 +3,29 @@ import { useRouter } from 'next/navigation';
 import StaticStarRating from '@/app/components/staticstarrating';
 import PostProfile from '@/app/components/postprofile';
 import Cookies from 'js-cookie';
-import { Post, PostDetailProps } from '@/app/lib/definitions';
+import { PostDetailProps } from '@/app/lib/definitions';
+import { deletePost } from '@/app/lib/api';
 import Image from 'next/image';
 
 export default function PostDetail({ post, onClose }: PostDetailProps) {
     const router = useRouter();
-    
-    if (!post) return null;
-    const myPage = Cookies.get('user') === post.username? true : false;
 
-    function handleDelete(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    if (!post) return null;
+    const myPage = Cookies.get('user') === post.username;
+
+    async function handleDelete(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         event.preventDefault();
 
-        if (post.username === 'demo_guest') {
-            if (window.confirm("Are you sure you want to delete this post?")) {
-                const stored = localStorage.getItem('myPosts');
-                if (!stored) return;
+        if (!window.confirm("Are you sure you want to delete this post?")) return;
 
-                const parsedPosts: { [username: string]: Post[] } = JSON.parse(stored);
-                for (const user in parsedPosts) {
-                    parsedPosts[user] = parsedPosts[user].filter(p => p.id !== post.id);
-                }
-
-                localStorage.setItem('myPosts', JSON.stringify(parsedPosts));
-                window.dispatchEvent(new Event("postDeleted")); // Trigger re-render
-
-                onClose();
-            }
-        } else {
-            const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-            const fetchUrl = `${baseUrl}/api/v1/post_review/delete_post_review?post_id=${post.id}`;
-            try {
-                fetch(fetchUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${Cookies.get('access_token')}`,
-                    }})
-            } catch (error) {
-                console.error('Error deleting post:', error);
-            }
-
+        try {
+            await deletePost(post.id as number);
+            const customEvent = new CustomEvent('postDeleted', { detail: { id: post.id } });
+            window.dispatchEvent(customEvent);
             onClose();
-
-            const event = new CustomEvent('postDeleted', { detail: { id: post.id } });
-            window.dispatchEvent(event);
-
+        } catch (error) {
+            console.error('Error deleting post:', error);
+            alert('Failed to delete post. Please try again.');
         }
     }
 
@@ -63,10 +41,10 @@ export default function PostDetail({ post, onClose }: PostDetailProps) {
                 <PostProfile username={post.username} profilePic={post.profile_pic} />
                 <button className={styles.closeButton} onClick={onClose}>X</button>
             </div>
-            {post.image && post.image.trim() !== '' && 
-                <Image 
+            {post.image && post.image.trim() !== '' &&
+                <Image
                     className={styles.foodPic}
-                    src={post.image || "noImage.png"} 
+                    src={post.image || "noImage.png"}
                     alt={`Picture of ${post.food_name}`}
                     width={300}
                     height={300}
@@ -80,15 +58,13 @@ export default function PostDetail({ post, onClose }: PostDetailProps) {
                 {post.review && post.review.trim() !== '' && <p className={styles.detailText}>{post.review}</p>}
                 {post.restaurant_name && post.restaurant_name.trim() !== '' && <p className={styles.detailText}><strong>Restaurant:</strong> {post.restaurant_name}</p>}
                 {post.tags && post.tags.trim() !== '' && <p className={styles.detailText}><strong>Tags:</strong> {post.tags}</p>}
-                { myPage? 
+                { myPage ?
                     <div className={styles.postBttnContainer}>
-                        <button className={styles.postButton}
-                            onClick={handleEdit}>Edit</button>
-                        <button className={styles.postButton}
-                            onClick={handleDelete}>Delete</button>
+                        <button className={styles.postButton} onClick={handleEdit}>Edit</button>
+                        <button className={styles.postButton} onClick={handleDelete}>Delete</button>
                     </div> : <div></div>
                 }
             </div>
         </div>
     )
-};
+}

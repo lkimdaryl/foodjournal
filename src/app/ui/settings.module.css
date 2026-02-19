@@ -1,103 +1,102 @@
+/* Mobile-first */
 .profilePage {
-    font-family: "Reddit Sans Condensed", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 50px;
-    color:black;
-    width: 60%;
-    place-self: start center;
-    margin: auto;
-    margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: black;
+  width: 90%;
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
 .profileSettings {
-    display: flex;
-    flex-direction: column;
-    width: auto;
-    place-self: start;
-    place-items: start center;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  place-self: start;
+  place-items: start center;
+}
+
+.profileSettings h2 {
+  font-family: var(--font-heading), serif;
 }
 
 .profileSectionLink {
-    place-self: center;
+  place-self: center;
 }
 
 .registrationForm {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
-
-.inputSection{
-    display:flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    place-self: center;
-    justify-content: center;
-    column-gap: 100px;
-    row-gap: 20px;
-    max-width: 800px;
-    width: 100%;
-    padding: 40px;
+.inputSection {
+  display: flex;
+  flex-direction: column;
+  place-self: center;
+  justify-content: center;
+  gap: 20px;
+  max-width: 800px;
+  width: 100%;
+  padding: 20px 0;
 }
 
-.formControl{
-    display: block;
-    width: 100%;
-    height: 34px;
-    padding: 6px 12px;
-    font-size: 14px;
-    line-height: 1.42857143;
-    color: #555;
-    background-color: #fff;
-    background-image: none;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-family: "Reddit Sans Condensed", sans-serif;
-    font-optical-sizing: auto;
-    font-style: normal;
+.formControl {
+  display: block;
+  width: 100%;
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
 
 .buttonSection {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    place-self: start center;
-    justify-content: center;
-    gap: 40px;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  place-self: start center;
+  justify-content: center;
+  gap: 20px;
 }
 
-.actionButton{
-    background-color: #36A7F9; 
-    border-color: #36A7F9;
-    border-radius: 6px;
-    border-style: solid;
-    border-width: 1px;
-    color: rgb(255, 255, 255);
-    cursor: pointer;
-    display: inline-block;
-    font-size: 18px;
-    font-weight: 400;
-    height: 46px;
-    letter-spacing: normal;
-    line-height: 24px;
-    padding: 10px 16px;
-    text-align: center;
-    vertical-align: middle;
-    white-space-collapse: collapse;
-    width: 100px;
-    font-optical-sizing: auto;
-    font-style: normal;
+.actionButton {
+  background-color: var(--sageGreen);
+  border-color: var(--sageGreen);
+  border-radius: 6px;
+  border-style: solid;
+  border-width: 1px;
+  color: white;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 400;
+  height: 42px;
+  padding: 8px 14px;
+  text-align: center;
+  vertical-align: middle;
+  width: auto;
+  min-width: 80px;
 }
 
-.output{
-    color:red;
-    white-space: nowrap;
-    height: 20px;
-    display: block;
+.actionButton:hover {
+  background-color: #6f8f56;
+}
+
+.output {
+  color: red;
+  white-space: nowrap;
+  height: 20px;
+  display: block;
 }
 
 .hiddenFileInput {
@@ -105,21 +104,41 @@
 }
 
 .customUploadBtn {
-    display: inline-block;
-    width: auto;
-    height: auto; 
-    line-height: auto; /* Center text vertically */
-    background-color: #36A7F9; 
-    border-radius: 10px; 
-    border: none; 
-    color: white;
-    font-family: "Reddit Sans Condensed", sans-serif;
-    font-optical-sizing: auto;
-    font-style: normal;
-    text-align: center;
-    
+  display: inline-block;
+  width: auto;
+  height: auto;
+  background-color: var(--bluetext);
+  border-radius: 10px;
+  border: none;
+  color: white;
+  text-align: center;
+  padding: 8px 14px;
+  cursor: pointer;
 }
 
-.actioButton:hover {
-    background-color: #0056b3;
+/* Desktop */
+@media screen and (min-width: 640px) {
+  .profilePage {
+    width: 60%;
+    margin-top: 50px;
+  }
+
+  .inputSection {
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 100px;
+    row-gap: 20px;
+    padding: 40px;
+  }
+
+  .buttonSection {
+    gap: 40px;
+  }
+
+  .actionButton {
+    font-size: 18px;
+    height: 46px;
+    padding: 10px 16px;
+    width: 100px;
+  }
 }

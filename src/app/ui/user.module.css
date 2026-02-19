@@ -1,34 +1,57 @@
+/* Mobile-first */
 .profileSection {
-    display: flex;
-    width: 100%;
-    /* margin: 40px 0 10px 0; */
-    padding: 40px 10px 10px 10px;
-    font-size: 2rem;
-    font-weight: bold;
-    align-content: center;
-    align-items: center;
-    color: var(--bluetext)
+  display: flex;
+  width: 100%;
+  padding: 20px 10px 10px 10px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  align-content: center;
+  align-items: center;
+  color: var(--bluetext);
+  font-family: var(--font-heading), serif;
 }
 
 .profilePic {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin-right: 10px;
-    object-fit: contain;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: contain;
 }
 
 .newPostButton {
-    position: fixed;
-    bottom: 20px;
+  position: fixed;
+  bottom: 20px;
+  right: 50%;
+  transform: translateX(50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--sageGreen);
+  color: white;
+  font-size: 1.8rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Desktop */
+@media screen and (min-width: 640px) {
+  .profileSection {
+    padding: 40px 10px 10px 10px;
+    font-size: 2rem;
+  }
+
+  .profilePic {
+    width: 100px;
+    height: 100px;
+  }
+
+  .newPostButton {
     right: 60px;
+    transform: none;
     width: 60px;
     height: 60px;
-    border-radius: 50%;
-    background-color: var(--bluetext);
-    color: white;
     font-size: 2rem;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
 }

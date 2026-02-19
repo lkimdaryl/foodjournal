@@ -1,21 +1,23 @@
 'use client';
 
-import PostList from '@/app/components/postlist'
-import Cookies from 'js-cookie';
+import PostList from '@/app/components/postlist';
 import styles from '@/app/ui/user.module.css';
 import cstyles from '@/app/ui/home.module.css';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import demoPosts from '@/app/lib/posts.json';
 import PostCard from '@/app/components/postcard';
 import Image from 'next/image';
 
 export default function UserPage() {
     const { username } = useParams() as { username: string };
-    const profilePic = Cookies.get('profilePic') || '/blankProfile.png';
-    const postUserId = Cookies.get('postUserId'); 
+    const searchParams = useSearchParams();
+    const profilePic = searchParams.get('pic') || '/blankProfile.png';
+    const postUserId = searchParams.get('uid');
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-    const fetchUrl = `${baseUrl}/api/v1/post_review/get_posts_by_id?user_id=${postUserId}`;
+    const fetchUrl = postUserId
+        ? `${baseUrl}/api/v1/post_review/get_posts_by_id?user_id=${postUserId}`
+        : undefined;
 
     const userDemoPosts = (demoPosts as Record<string, typeof demoPosts[keyof typeof demoPosts]>)[username] || [];
 
@@ -41,12 +43,12 @@ export default function UserPage() {
                     food_name={post.food_name}
                     rating={post.rating}
                     review={post.review}
-                    image={post.image} 
-                    tags={post.tags} 
-                    restaurant_name={post.restaurant_name} 
+                    image={post.image}
+                    tags={post.tags}
+                    restaurant_name={post.restaurant_name}
                 />
             ))}
-            <PostList fetchUrl={fetchUrl} />
+            {fetchUrl && <PostList fetchUrl={fetchUrl} />}
         </div>
     );
 }

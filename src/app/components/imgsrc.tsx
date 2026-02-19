@@ -6,7 +6,6 @@ import { ImgSrcProps } from "@/app/lib/definitions";
 import styles from '@/app/ui/new_edit_post.module.css';
 import NextImage from "next/image";
 
-
 export default function ImageInput({ onImageChange, initialImage }: ImgSrcProps) {
   const [mode, setMode] = useState<"upload" | "camera">("upload");
   const [preview, setPreview] = useState<string | null>(null);
@@ -71,7 +70,7 @@ export default function ImageInput({ onImageChange, initialImage }: ImgSrcProps)
   }
 
   return (
-    <div className="image-input">
+    <div>
       <label className={styles.entryLabel} htmlFor="imageMode">Mode: </label>
       <select
         id="imageMode"
@@ -94,22 +93,8 @@ export default function ImageInput({ onImageChange, initialImage }: ImgSrcProps)
             onChange={handleFileChange}
             className={styles.hiddenFileInput}
           />
-          {/* <span className={styles.fileName}>
-            {selectedFile ? selectedFile.name : "No image chosen"}
-          </span> */}
         </div>
       )}
-
-
-      {/* <br />
-      {mode === "upload" && (
-        <input
-          className={styles.imgSelect}
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-        /> 
-      )}*/}
 
       {mode === "camera" && (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
@@ -125,7 +110,7 @@ export default function ImageInput({ onImageChange, initialImage }: ImgSrcProps)
       )}
 
       {preview && (
-        <div className="image-preview">
+        <div>
           <p>Preview:</p>
           <NextImage
             src={preview}

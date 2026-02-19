@@ -1,16 +1,15 @@
+/* Mobile-first: full-width cards */
 .minPostContainer {
   background-color: var(--cardBackground);
-  border-radius: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  width: 350px;
-  margin: 0 auto;
+  width: clamp(250px, 90%, 400px);
+  margin: 20px auto;
   position: relative;
-  margin: 20px 0 20px 0;
 }
 
 .profileSection {
@@ -20,7 +19,14 @@
   margin-bottom: 10px;
 }
 
-.mealName, .starRating {
+.mealName {
+  font-size: 20px;
+  color: #636060;
+  margin: 0;
+  font-family: var(--font-heading), serif;
+}
+
+.starRating {
   font-size: 20px;
   color: #636060;
   margin: 0;
@@ -35,8 +41,8 @@
 }
 
 .minPostImage {
-  width: 300px;
-  height: 300px;
+  width: clamp(200px, 85%, 300px);
+  height: 200px;
   margin-bottom: 10px;
   border-radius: 10px;
   object-fit: cover;
@@ -52,15 +58,15 @@
   width: 100%;
 }
 
-@media screen and (max-width: 645px) {
-
+/* Desktop: fixed-width cards */
+@media screen and (min-width: 640px) {
   .minPostContainer {
-    width: clamp(250px, 80%, 400px);
+    width: 350px;
+    margin: 20px 0;
   }
 
   .minPostImage {
-    width: clamp(200px, 85%, 300px);
-    height: 200px;
+    width: 300px;
+    height: 300px;
   }
-  
 }

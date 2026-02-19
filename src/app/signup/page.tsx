@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import styles from '@/app/ui/login_signup.module.css';
 import { useRouter } from 'next/navigation';
+import { createUser } from '@/app/lib/api';
 
 export default function SignUp() {
   const [firstName, setFirstName] = useState('');
@@ -14,11 +15,8 @@ export default function SignUp() {
   const [userNameValid, setUserNameValid] = useState(true);
   const [emailValid, setEmailValid] = useState(true);
   const [passwordMatch, setPasswordMatch] = useState(true);
-  const [userNameErrorMessage, setUserNameErrorMessage] = useState('');
-  const [emailErrorMessage, setEmailErrorMessage] = useState('');
-  
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  const url = `${baseUrl}/api/v1/auth/create_user`;
+  const [error, setError] = useState('');
+
   const router = useRouter();
 
   const validateUserName = (userName: string) => {
@@ -40,7 +38,7 @@ export default function SignUp() {
     setEmailValid(validateEmail(e.target.value));
   };
 
-  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const isUserNameValid = validateUserName(userName);
     const isEmailValid = validateEmail(email);
@@ -49,41 +47,25 @@ export default function SignUp() {
     setUserNameValid(isUserNameValid);
     setEmailValid(isEmailValid);
     setPasswordMatch(isPasswordMatch);
-    setUserNameErrorMessage('');
-    setEmailErrorMessage('');
+    setError('');
 
     if (isUserNameValid && isEmailValid && isPasswordMatch) {
-      const userData = {
-        first_name: firstName,
-        last_name: lastName,
-        username: userName,
-        email: email,
-        password: password
-      };
-
-        try {
-          const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-              'accept': 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(userData),
-          });
-
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-
-          const data = await response.json();
-          alert("Sign up successful! Redirecting to login page...");
-          setTimeout(() => {
-            router.push('/login');
-          }, 2000);
-
-        } catch (error) {
-          console.error('Error during sign up:', error);
-        }
+      try {
+        await createUser({
+          first_name: firstName,
+          last_name: lastName,
+          username: userName,
+          email: email,
+          password: password,
+        });
+        alert("Sign up successful! Redirecting to login page...");
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Sign up failed. Please try again.';
+        setError(message);
+      }
     }
   };
 
@@ -91,7 +73,7 @@ export default function SignUp() {
     <div className={styles.formContainer}>
       <div className={styles.formBox}>
         <h1 className={styles.formH1}>Food Journal</h1>
-        <p className={styles.formP}>Already have an account? Click <a className={styles.signUpBoxLink} href="/signin">here</a> to login!</p>
+        <p className={styles.formP}>Already have an account? Click <a className={styles.formLink} href="/login">here</a> to login!</p>
         <h2 className={styles.formH2}>Sign Up</h2>
         <form className={styles.form} onSubmit={handleSubmit}>
           <label className={styles.formLabel} htmlFor="firstName">First Name</label>
@@ -121,10 +103,7 @@ export default function SignUp() {
             onChange={handleUserNameChange}
             required
           />
-
-          {!userNameValid && <p>Username must be between 3 to 20 characters long.</p>}
-
-          {userNameErrorMessage && <p className="error-message">{userNameErrorMessage}</p>}
+          {!userNameValid && <p className={styles.errorMessage}>Username must be between 3 to 20 characters long.</p>}
           <label className={styles.formLabel} htmlFor="email">Email</label>
           <input
             className={styles.formInput}
@@ -134,8 +113,7 @@ export default function SignUp() {
             onChange={handleEmailChange}
             required
           />
-          {!emailValid && <p className='error-message'>Invalid email address</p>}
-          {emailErrorMessage && <p className="error-message">{emailErrorMessage}</p>}
+          {!emailValid && <p className={styles.errorMessage}>Invalid email address</p>}
           <label className={styles.formLabel} htmlFor="password">Password</label>
           <input
             className={styles.formInput}
@@ -145,7 +123,7 @@ export default function SignUp() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <label className={styles.formLabel}htmlFor="confirmPassword">Confirm Password</label>
+          <label className={styles.formLabel} htmlFor="confirmPassword">Confirm Password</label>
           <input
             className={styles.formInput}
             id="confirmPassword"
@@ -155,6 +133,7 @@ export default function SignUp() {
             required
           />
           {!passwordMatch && <p className={styles.errorMessage}>Passwords do not match</p>}
+          {error && <p className={styles.errorMessage}>{error}</p>}
           <button className={styles.submit} type="submit">Sign Up</button>
         </form>
       </div>

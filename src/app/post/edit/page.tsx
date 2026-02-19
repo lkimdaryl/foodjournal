@@ -6,22 +6,24 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import ImageInput from "@/app/components/imgsrc";
-import { DbPost, ApiPayload } from '@/app/lib/definitions';
+import { DbPost } from '@/app/lib/definitions';
+import { updatePost } from '@/app/lib/api';
 
 export default function EditPost() {
     const router = useRouter();
-
     const [post, setPost] = useState<DbPost | null>(null);
     const [imageData, setImageData] = useState<string | null>(null);
-    const [rating, setRating] = useState<number>(() => post?.rating || 0);
+    const [rating, setRating] = useState<number>(0);
+    const [error, setError] = useState<string | null>(null);
+    const [submitting, setSubmitting] = useState(false);
+
+    const isDemoUser = Cookies.get('user') === 'demo_guest';
 
     useEffect(() => {
         if (typeof window === "undefined") return;
-
         const postToEdit = localStorage.getItem('postToEdit');
         if (postToEdit) {
             try {
-                // const parsedPost = JSON.parse(postToEdit);
                 const parsedPost: DbPost = JSON.parse(postToEdit);
                 setPost(parsedPost);
                 setRating(parsedPost.rating || 0);
@@ -37,11 +39,14 @@ export default function EditPost() {
         router.back();
     }
 
-    function handleSubmit(event: React.MouseEvent<HTMLButtonElement>): void {
+    async function handleSubmit(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
         const form = event.currentTarget.form;
         if (!form || !post) return;
-        
+
+        setSubmitting(true);
+        setError(null);
+
         const updatedPost = {
             ...post,
             food_name: form.mealName.value,
@@ -50,70 +55,17 @@ export default function EditPost() {
             restaurant_name: form.restaurant.value,
             review: form.comments.value,
             tags: form.tags.value,
+            user_id: Number(Cookies.get('userId')) || post.user_id,
         };
 
-        if (Cookies.get('user') === 'demo_guest') {
-            const user = Cookies.get('user');
-            const raw = localStorage.getItem('myPosts');
-
-            let allPosts: { [key: string]: DbPost[] } = {};
-            try {
-                allPosts = raw ? JSON.parse(raw) : {};
-            } catch (e) {
-                console.warn("Corrupted localStorage. Resetting.");
-                allPosts = {};
-                console.error(e);
-            }
-
-            if (!Array.isArray(allPosts[user!])) {
-                allPosts[user!] = [];
-            }
-
-            // Find and update the post by unique_id
-            const index = allPosts[user!].findIndex(p => p.id === post.id);
-            if (index !== -1) {
-                allPosts[user!][index] = updatedPost;
-                localStorage.setItem('myPosts', JSON.stringify(allPosts));
-                router.push('/user/demo'); // Redirect to the demo user page
-            } else {
-                console.warn("Post not found in localStorage.");
-            }
-        } else {
-            const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-            const access_token = Cookies.get('access_token');
-            const url = `${baseUrl}/api/v1/post_review/update_post_review?post_id=${post.id}`;
-            
-            const apiPayload: ApiPayload = {
-                ...updatedPost,
-                user_id: Number(Cookies.get('userId')), // Add user_id for the backend
-            };
-            //not needed in the backend
-            delete apiPayload.id;
-            delete apiPayload.profile_pic;
-            delete apiPayload.username;
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${access_token}`,
-                },
-                body: JSON.stringify(apiPayload),
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok.');
-                }
-                return response.json();
-            })
-            .then(() => {
-                console.log('Post updated successfully');
-                router.push('/user/mypage'); // Redirect to My Page after successful edit
-            })
-            .catch(error => {
-                console.error('Error updating post:', error);
-            });
+        try {
+            await updatePost(post.id, updatedPost);
+            router.push(isDemoUser ? '/user/demo' : '/user/mypage');
+        } catch (err) {
+            const message = err instanceof Error ? err.message : 'Failed to update post.';
+            setError(message);
+        } finally {
+            setSubmitting(false);
         }
     }
 
@@ -149,7 +101,7 @@ export default function EditPost() {
 
             <label className={styles.entryLabel} htmlFor="comments">Comments</label>
             <textarea
-                className={styles.entryInput}
+                className={styles.comments}
                 id="comments"
                 name="comments"
                 defaultValue={post?.review}
@@ -168,9 +120,13 @@ export default function EditPost() {
                 required
             />
 
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+
             <div className={styles.formBttnContainer}>
                 <button className={styles.formBttn} type="button" onClick={handleCancel}>Cancel</button>
-                <button className={styles.formBttn} type="submit" onClick={handleSubmit}>Save Changes</button>
+                <button className={styles.formBttn} type="submit" onClick={handleSubmit} disabled={submitting}>
+                    {submitting ? 'Saving...' : 'Save Changes'}
+                </button>
             </div>
         </form>
     );

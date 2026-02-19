@@ -1,6 +1,8 @@
 'use client';
 
 import PostCard from '@/app/components/postcard';
+import Loading from '@/app/components/loading';
+import ErrorMessage from '@/app/components/errormessage';
 import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -8,43 +10,35 @@ import { DbPost } from '@/app/lib/definitions';
 import cstyles from '@/app/ui/home.module.css';
 import styles from '@/app/ui/user.module.css';
 import Image from 'next/image';
+import { fetchUserPosts } from '@/app/lib/api';
 
 export default function MyPage() {
     const router = useRouter();
     const DefaultPic = '/blankProfile.png';
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-    const fetchUrl = `${baseUrl}/api/v1/post_review/get_posts_by_id?user_id=${Cookies.get('userId')}`;
+    const userId = Cookies.get('userId');
 
     const [allMyPosts, setAllMyPosts] = useState<DbPost[]>([]);
     const [profilePic, setProfilePic] = useState<string>(DefaultPic);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (allMyPosts.length > 0) return; // Avoid fetching if posts are already loaded
+        if (!userId) {
+            setLoading(false);
+            return;
+        }
 
-        // fetchPosts
-        fetch(fetchUrl, {
-            method: 'GET',
-            headers: {
-                'accept': 'application/json',
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                setAllMyPosts([]);
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data && data.length > 0) {
-                setAllMyPosts(data);
-                setProfilePic(data[0].profile_pic || DefaultPic);
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching posts:', error);
-        });
-    }, [allMyPosts.length, fetchUrl]);
+        setLoading(true);
+        fetchUserPosts(userId)
+            .then(data => {
+                if (data && data.length > 0) {
+                    setAllMyPosts(data);
+                    setProfilePic(data[0].profile_pic || DefaultPic);
+                }
+            })
+            .catch(err => setError(err.message || 'Failed to load posts.'))
+            .finally(() => setLoading(false));
+    }, [userId]);
 
     useEffect(() => {
         const handlePostDeleted = (event: Event) => {
@@ -53,11 +47,11 @@ export default function MyPage() {
             setAllMyPosts((prevPosts) => prevPosts.filter(p => p.id !== deletedId));
         };
         window.addEventListener('postDeleted', handlePostDeleted);
-
-        return () => {
-            window.removeEventListener('postDeleted', handlePostDeleted);
-        };
+        return () => window.removeEventListener('postDeleted', handlePostDeleted);
     }, []);
+
+    if (loading) return <Loading message="Loading your posts..." />;
+    if (error) return <ErrorMessage message={error} />;
 
     return (
         <div className={cstyles.postContainer}>
@@ -81,12 +75,11 @@ export default function MyPage() {
                     food_name={post.food_name}
                     rating={post.rating}
                     review={post.review}
-                    image={post.image} 
-                    tags={post.tags} 
+                    image={post.image}
+                    tags={post.tags}
                     restaurant_name={post.restaurant_name} />
             ))}
             <button className={styles.newPostButton} onClick={() => router.push('/post/new')}>+</button>
         </div>
     );
 }
-

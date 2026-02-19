@@ -2,38 +2,32 @@
 
 import styles from '@/app/ui/settings.module.css';
 import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
-import Cookies from 'js-cookie';
 import PostProfile from '@/app/components/postprofile';
 import { UserData } from '@/app/lib/definitions';
+import { getUser, updateUser } from '@/app/lib/api';
+import { useAuth } from '@/app/lib/auth-context';
 
 // ---------------- Custom Hook ----------------
-function useUserData(url: string) {
+function useUserData() {
   const initialStateRef = useRef<Partial<UserData>>({});
   const [user, setUser] = useState<Partial<UserData>>({});
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await fetch(url, { 
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${Cookies.get('access_token')}`
-          }
-        });
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        const data: UserData = await res.json();
+    setLoading(true);
+    getUser()
+      .then((data) => {
         initialStateRef.current = data;
         setUser(data);
-      } catch (err) {
-        console.error('Error fetching user data:', err);
-      }
-    };
-    fetchUser();
-  }, [url]);
+      })
+      .catch((err) => setFetchError(err.message || 'Failed to load profile.'))
+      .finally(() => setLoading(false));
+  }, []);
 
   const resetUser = () => setUser(initialStateRef.current);
 
-  return { user, setUser, resetUser, initialStateRef };
+  return { user, setUser, resetUser, initialStateRef, loading, fetchError };
 }
 
 // ---------------- Input Component ----------------
@@ -77,20 +71,18 @@ const InputField: React.FC<InputFieldProps> = ({
 // ---------------- Main Component ----------------
 export default function EditProfile() {
   const DefaultPic = '/blankProfile.png';
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  const { user, setUser, resetUser, initialStateRef } = useUserData(`${baseUrl}/api/v1/auth/get_user`);
+  const { user, setUser, resetUser, initialStateRef, loading, fetchError } = useUserData();
+  const { updateProfile } = useAuth();
   const [profileImage, setProfileImage] = useState<string>(DefaultPic);
   const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
   const [errors, setErrors] = useState({ email: '', verifyPassword: '' });
 
-  // Update profile image when user changes
   useEffect(() => { if (user.profile_picture) setProfileImage(user.profile_picture); }, [user]);
 
   // ---------------- Handlers ----------------
   const handleChange = (field: string, value: string) => {
     setUser(prev => ({ ...prev, [field]: value }));
 
-    // Simple validation
     if (field === 'email') {
       setErrors(prev => ({
         ...prev,
@@ -127,18 +119,8 @@ export default function EditProfile() {
     if (profileImage !== initialStateRef.current.profile_picture) updatedData.profile_picture = profileImage;
 
     try {
-      const res = await fetch(`${baseUrl}/api/v1/auth/update_user`, {
-        method: 'PATCH',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${Cookies.get('access_token')}` 
-      },
-        body: JSON.stringify(updatedData),
-      });
-      if (!res.ok) throw new Error('User could not be updated.');
-      Cookies.set('user', user.username || '');
-      Cookies.set('profilePicture', profileImage);
-      window.dispatchEvent(new Event('userInfoUpdated'));
+      await updateUser(updatedData);
+      updateProfile({ username: user.username, profilePicture: profileImage });
       setIsReadOnly(true);
       initialStateRef.current = { ...initialStateRef.current, ...updatedData };
     } catch (err) {
@@ -147,6 +129,9 @@ export default function EditProfile() {
     }
   };
 
+  if (loading) return <p style={{ textAlign: 'center', padding: '40px', color: '#636060' }}>Loading profile...</p>;
+  if (fetchError) return <p style={{ textAlign: 'center', padding: '40px', color: 'red' }}>{fetchError}</p>;
+
   const inputFields: (InputFieldConfig | null)[] = [
     { label: 'First Name', name: 'first_name' },
     { label: 'Last Name', name: 'last_name' },
@@ -154,9 +139,8 @@ export default function EditProfile() {
     { label: 'Email', name: 'email', type: 'email', error: errors.email },
     { label: isReadOnly ? 'Password' : 'New Password', name: 'password', type: 'password' },
     !isReadOnly ? { label: 'Verify Password', name: 'verifyPassword', type: 'password', error: errors.verifyPassword } : null
-  ]
+  ];
 
-  // ---------------- Render ----------------
   return (
     <div className={styles.profilePage}>
       <div className={styles.profileSettings}>

@@ -1,20 +1,20 @@
 'use client';
 
 import { DynamicStarRatingProps } from "@/app/lib/definitions";
+import styles from "@/app/ui/starrating.module.css";
 
 export default function DynamicStars({ onRatingChange, rating }: DynamicStarRatingProps) {
 
   const handleStarClick = (index: number) => {
-    const newRating = index + 1;
-    onRatingChange?.(newRating)
+    onRatingChange?.(index + 1);
   };
 
   return (
-    <div style={{ fontSize: "2rem", cursor: "pointer" }}>
+    <div className={styles.interactive}>
       {[...Array(5)].map((_, index) => (
         <span
           key={index}
-          style={{ color: index < rating ? "#FF5A2D" : "gray" }}
+          className={`${styles.star} ${index < rating ? styles.filled : ''}`}
           onClick={() => handleStarClick(index)}
         >
           ★
@@ -22,5 +22,4 @@ export default function DynamicStars({ onRatingChange, rating }: DynamicStarRati
       ))}
     </div>
   );
-};
-
+}

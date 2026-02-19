@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styles from '@/app/ui/recipes.module.css';
 import { pastaProps, recipeProps } from '@/app/lib/definitions';
 import Image from 'next/image';
@@ -8,13 +8,13 @@ import { RecipeData, RecipeItem } from '@/app/lib/definitions';
 
 const Pasta: React.FC<pastaProps> = ({img, label, url}) => {
   return (
-    <div className={styles.pastaContainer}>
-      <Image 
-        src={img} 
-        alt={label} 
+    <div className={styles.recipeCard}>
+      <Image
+        src={img}
+        alt={label}
         width={300}
         height={300}
-        className={styles.weeklyPastaImgMobile}
+        className={styles.weeklyPastaImg}
       />
       <div className={styles.recipeInfo}>
         <h3 className={styles.weeklyPasta}>{label}</h3>
@@ -33,7 +33,7 @@ const Recipe: React.FC<recipeProps> = ({uri, url, img, label}) => {
         alt={label}
         width={200}
         height={200}
-        className={styles.searchResultImgMobile}
+        className={styles.searchResultImg}
       />
       <div className={styles.recipeInfo}>
         <h3 className={styles.recipeInfoH3}>{label}</h3>
@@ -99,12 +99,12 @@ export default function Recipes() {
     selectPastaOfTheWeek();
   }, [pastaBank]);
 
-  const searchRecipes = async (e: { preventDefault: () => void; }) => {
-    e.preventDefault();
+  const fetchRecipes = useCallback(async (searchQuery: string) => {
+    if (!searchQuery.trim()) return;
     setLoading(true);
     setError(null);
 
-    const url = `https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${applicationId}&app_key=${applicationKey}`;
+    const url = `https://api.edamam.com/api/recipes/v2?type=public&q=${searchQuery}&app_id=${applicationId}&app_key=${applicationKey}`;
 
     try {
       const headers: HeadersInit = {
@@ -123,14 +123,29 @@ export default function Recipes() {
       const data = await response.json();
       setRecipes(data.hits);
     } catch (err) {
-      let message = 'Failed to fetch recipes. An unknown error occurred.';
+      let message = 'An unknown error occurred.';
       if (err instanceof Error) {
-        message = `Failed to fetch recipes. Error: ${err.message}`;
+        message = err.message;
       }
       setError(`Failed to fetch recipes. Error: ${message}`);
     } finally {
       setLoading(false);
     }
+  }, [applicationId, applicationKey]);
+
+  // Debounce: wait 500ms after user stops typing before searching
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (!query.trim()) return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => fetchRecipes(query), 500);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [query, fetchRecipes]);
+
+  const searchRecipes = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    fetchRecipes(query);
   };
 
   return (

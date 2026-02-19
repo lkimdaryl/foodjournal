@@ -1,22 +1,19 @@
-@import "tailwindcss";
-
 :root {
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  --navBackground: #FF5A2D;
+  --cardBackground: #FFCE70;
+  --bluetext: #36A7F9;
+  --sageGreen: #87A96B;
+  --font-body: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  --navBackground: #FF5A2D;
-  --cardBackground: #FFCE70;
-  --bluetext: #36A7F9;
 }
 
 html {
   font-size: 16px;
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--font-body);
   scroll-behavior: smooth;
 }
 
@@ -24,50 +21,39 @@ html, body {
   margin: 0;
   padding: 0;
   background-color: beige;
-  min-width: 100vw;
   min-height: 100vh;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), serif;
+}
+
+/* Mobile-first: column layout by default */
 body {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   width: 100%;
-  height: 100%;
   overflow-x: hidden;
 }
 
-@media screen and (max-width: 645px) {
+main {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+
+/* Desktop: side-by-side layout */
+@media screen and (min-width: 640px) {
   body {
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    overflow-x: hidden;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  main {
+    height: 100vh;
+    overflow-y: auto;
   }
 }
-
-/* :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-} */

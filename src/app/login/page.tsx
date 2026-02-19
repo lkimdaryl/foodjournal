@@ -2,8 +2,9 @@
 
 import styles from '@/app/ui/login_signup.module.css';
 import React, { useEffect, useState, useRef } from 'react';
-import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
+import { loginUser } from '@/app/lib/api';
+import { useAuth } from '@/app/lib/auth-context';
 
 export default function Login() {
   const [username, setUsername] = useState<string>('');
@@ -12,62 +13,33 @@ export default function Login() {
   const [loading, setLoading] = useState<boolean>(false);
   const usernameInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const { login } = useAuth();
 
   useEffect(() => {
     usernameInputRef.current?.focus();
   }, []);
-
-  const loginEvent = ((path: string) => {
-    Cookies.set('signedIn', 'true'); // in case user sign as demo_guest
-    Cookies.set('user', username);  // in case user sign as demo_guest
-    const event = new Event("userInfoUpdated");
-    window.dispatchEvent(event);
-    router.push(path);
-  });
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
     setError('');
 
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Demo credentials
     if (username === "demo_guest" && password === "password123") {
-      alert("This is a demo user. No posts will truly be saved or edited.")
-      loginEvent('/user/demo');
-    } 
-    else {
-      const formData = new URLSearchParams();
-      formData.append("username", username);
-      formData.append("password", password);
-      
-      const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
-      const url = `${baseURL}/api/v1/auth/login`;
+      alert("This is a demo user. No posts will truly be saved or edited.");
+      login({ username });
+      router.push('/user/demo');
+    } else {
       try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: formData.toString(),
+        const data = await loginUser(username, password);
+        login({
+          username,
+          userId: data.user_id,
+          profilePicture: data.profile_picture ?? "/blankProfile.png",
+          accessToken: data.access_token,
         });
-        const data = await response.json();
-        
-        if (response.ok) {
-          Cookies.set("access_token", data.access_token, {path: "/"});
-          Cookies.set("signedIn", "true", { path: "/" });
-          Cookies.set("user", username, { path: "/" });
-          Cookies.set("userId", data.user_id, { path: "/" });
-          Cookies.set("profilePicture", data.profile_picture ?? "/blankProfile.png", { path: "/" });
-          loginEvent('/user/mypage');
-        } else {
-          setError('Invalid username or password.');
-        }
-      } catch (error) {
-        console.error('Login failed:', error);
+        router.push('/user/mypage');
+      } catch {
+        setError('Invalid username or password.');
       }
     }
     setLoading(false);
@@ -86,8 +58,9 @@ export default function Login() {
             value={username}
             placeholder='demo username: demo_guest'
             onChange={(e) => setUsername(e.target.value)}
+            ref={usernameInputRef}
             required
-            />
+          />
           <label className={styles.formLabel} htmlFor="password">Password</label>
           <input
             className={styles.formInput}
@@ -97,9 +70,9 @@ export default function Login() {
             placeholder="demo password: password123"
             onChange={(e) => setPassword(e.target.value)}
             required
-            />
+          />
           <div className={styles.errorMessage}>{error}</div>
-          <button className={styles.submit} disabled={loading}>{loading ? 'Loggin in...' : 'Login'}</button>
+          <button className={styles.submit} disabled={loading}>{loading ? 'Logging in...' : 'Login'}</button>
           <a className={styles.forgot} href="https://youtu.be/b3rNUhDqciM">Forgot Password?</a>
           <p className={styles.notice}>New to Food Journal?</p>
           <a className={styles.signupLink} href='/signup'>Sign up for free</a>
