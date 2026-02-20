@@ -39,7 +39,6 @@ export default function NavBar() {
           height={100}
           className={styles.logo}
         />
-        <p className={styles.logoText}>Food Journal</p>
       </Link>
 
       <ul className={styles.navList}>
